@@ -6,7 +6,7 @@ from .serializers import PurchaseOrderSerializer
 from django.utils import timezone
 
 
-class PurchaseOrderListAPITest(TestCase):
+class PurchaseOrderAPITest(TestCase):
     def setUp(self):
         self.client = Client()
         self.vendor1 = Vendor.objects.create(
@@ -16,9 +16,9 @@ class PurchaseOrderListAPITest(TestCase):
 
     def test_get_purchase_orders(self):
         PurchaseOrder.objects.create(
-            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, status='pending')
+            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, issue_date=timezone.now(), status='pending')
         PurchaseOrder.objects.create(
-            po_number='PO-002', vendor=self.vendor2, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, status='pending')
+            po_number='PO-002', vendor=self.vendor2, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, issue_date=timezone.now(), status='pending')
 
         response = self.client.get('/api/purchase_orders/')
         purchase_orders = PurchaseOrder.objects.all()
@@ -29,11 +29,11 @@ class PurchaseOrderListAPITest(TestCase):
 
     def test_get_purchase_orders_by_vendor(self):
         PurchaseOrder.objects.create(
-            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, status='pending')
+            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, issue_date=timezone.now(), status='pending')
         PurchaseOrder.objects.create(
-            po_number='PO-002', vendor=self.vendor1, items="[{'name': 'Product A', 'quantity': 5}]", quantity=5, status='pending')
+            po_number='PO-002', vendor=self.vendor1, items="[{'name': 'Product A', 'quantity': 5}]", quantity=5, issue_date=timezone.now(), status='pending')
         PurchaseOrder.objects.create(
-            po_number='PO-003', vendor=self.vendor2, items="[{'name': 'Product B', 'quantity': 5}]", quantity=5, status='pending')
+            po_number='PO-003', vendor=self.vendor2, items="[{'name': 'Product B', 'quantity': 5}]", quantity=5, issue_date=timezone.now(), status='pending')
 
         response = self.client.get(
             '/api/purchase_orders/?vendor_code='+self.vendor1.pk)
@@ -48,6 +48,7 @@ class PurchaseOrderListAPITest(TestCase):
             'po_number': 'PO-001',
             'vendor': self.vendor1.pk,
             'items': "[{'name': 'Product X', 'quantity': 10}]",
+            'issue_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
             'quantity': '10',
             'status': 'pending'
         }
@@ -61,7 +62,7 @@ class PurchaseOrderListAPITest(TestCase):
 
     def test_retrive_purchase_orders(self):
         purchase_order = PurchaseOrder.objects.create(
-            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, status='pending')
+            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, issue_date=timezone.now(), status='pending')
 
         response = self.client.get(f'/api/purchase_orders/{purchase_order}/')
         serializer = PurchaseOrderSerializer(purchase_order)
@@ -75,12 +76,14 @@ class PurchaseOrderListAPITest(TestCase):
             vendor=self.vendor1,
             items=['item1', 'item2'],
             quantity=10,
+            issue_date=timezone.now(),
             status='pending'
         )
         updated_data = {
             'po_number': 'PO-001',
             'vendor': self.vendor2.pk,
             'items': '["updated_item1", "updated_item2"]',
+            'issue_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
             'quantity': 20,
             'status': 'completed'
         }
@@ -99,6 +102,7 @@ class PurchaseOrderListAPITest(TestCase):
             vendor=self.vendor1,
             items=['item1', 'item2'],
             quantity=10,
+            issue_date=timezone.now(),
             status='pending'
         )
         response = self.client.delete(
@@ -114,6 +118,7 @@ class PurchaseOrderListAPITest(TestCase):
             vendor=self.vendor1,
             items=['item1', 'item2'],
             quantity=10,
+            issue_date=timezone.now(),
             status='pending'
         )
 

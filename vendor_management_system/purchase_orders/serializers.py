@@ -5,5 +5,5 @@ from .models import PurchaseOrder
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrder
-        fields = ['po_number', 'vendor', 'order_date',
+        fields = ['po_number', 'vendor', 'order_date', 'issue_date',
                   'items', 'quantity', 'status']

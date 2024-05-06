@@ -5,6 +5,7 @@ from .models import PurchaseOrder
 from .serializers import PurchaseOrderSerializer
 from django.http import Http404
 from django.utils import timezone
+from .signals import recalculate_avg_response_time_signal
 
 
 class PurchaseOrderListCreate(APIView):
@@ -57,6 +58,9 @@ class AcknowledgePurchaseOrder(APIView):
             purchase_order = PurchaseOrder.objects.get(pk=po_number)
             purchase_order.acknowledgment_date = timezone.now()
             purchase_order.save()
+
+            recalculate_avg_response_time_signal.send(
+                sender=None, vendor=purchase_order.vendor)
 
             return Response({"message": "Purchase order acknowledged successfully"}, status=status.HTTP_200_OK)
         except PurchaseOrder.DoesNotExist:

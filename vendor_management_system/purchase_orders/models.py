@@ -9,6 +9,7 @@ class PurchaseOrder(models.Model):
     items = models.JSONField()
     quantity = models.PositiveIntegerField()
     status = models.CharField(max_length=50, default="Order Placed")
+    issue_date = models.DateTimeField()
 
     acknowledgment_date = models.DateTimeField(null=True)
 

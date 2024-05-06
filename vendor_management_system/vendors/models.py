@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class Vendor(models.Model):
     name = models.CharField(max_length=100)
     contact_details = models.TextField()
-    address = models.CharField(max_length=100)
+    address = models.TextField()
     vendor_code = models.CharField(max_length=50, primary_key=True)
 
     on_time_delivery_rate = models.FloatField(
