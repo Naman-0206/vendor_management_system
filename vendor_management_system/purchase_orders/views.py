@@ -4,6 +4,7 @@ from rest_framework import status
 from .models import PurchaseOrder
 from .serializers import PurchaseOrderSerializer
 from django.http import Http404
+from django.utils import timezone
 
 
 class PurchaseOrderListCreate(APIView):
@@ -48,3 +49,15 @@ class PurchaseOrderDetail(APIView):
         purchase_order = self.get_object(po_number)
         purchase_order.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AcknowledgePurchaseOrder(APIView):
+    def post(self, request, po_number):
+        try:
+            purchase_order = PurchaseOrder.objects.get(pk=po_number)
+            purchase_order.acknowledgment_date = timezone.now()
+            purchase_order.save()
+
+            return Response({"message": "Purchase order acknowledged successfully"}, status=status.HTTP_200_OK)
+        except PurchaseOrder.DoesNotExist:
+            return Response({"error": "Purchase order not found"}, status=status.HTTP_404_NOT_FOUND)
