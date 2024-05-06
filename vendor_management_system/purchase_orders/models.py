@@ -1,6 +1,7 @@
 from django.db import models
 from vendors.models import Vendor
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 
 
 class PurchaseOrder(models.Model):
@@ -11,6 +12,8 @@ class PurchaseOrder(models.Model):
     quantity = models.PositiveIntegerField()
     status = models.CharField(max_length=50, default="Order Placed")
     issue_date = models.DateTimeField()
+    expected_delivery_date = models.DateTimeField()
+    delivery_date = models.DateTimeField(null=True, blank=True)
 
     acknowledgment_date = models.DateTimeField(null=True)
 
