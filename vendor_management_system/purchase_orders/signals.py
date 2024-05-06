@@ -32,3 +32,16 @@ def recalculate_vendor_fullfilment_rate(sender, instance: PurchaseOrder, **kwarg
                 vendor=instance.vendor, status__iexact='completed').count()
             vendor.fulfilment_rate = completed_orders/total_orders*100
             vendor.save()
+
+
+@receiver(post_save, sender=PurchaseOrder)
+def recalculate_vendor_avg_quality_rating(sender, instance: PurchaseOrder, **kwargs):
+    if instance.status.lower() == 'completed' and instance.quality_rating:
+        vendor = instance.vendor
+        rated_pos = PurchaseOrder.objects.filter(
+            vendor=vendor, quality_rating__isnull=False)
+        if rated_pos.count() > 0:
+            total_rating = sum(
+                rated_po.quality_rating for rated_po in rated_pos)
+            vendor.quality_rating_avg = total_rating/rated_pos.count()
+            vendor.save()

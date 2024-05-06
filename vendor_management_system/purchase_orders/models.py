@@ -1,5 +1,6 @@
 from django.db import models
 from vendors.models import Vendor
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class PurchaseOrder(models.Model):
@@ -12,6 +13,9 @@ class PurchaseOrder(models.Model):
     issue_date = models.DateTimeField()
 
     acknowledgment_date = models.DateTimeField(null=True)
+
+    quality_rating = models.FloatField(
+        null=True, validators=[MinValueValidator(0), MaxValueValidator(5)])
 
     def __str__(self):
         return self.po_number

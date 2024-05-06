@@ -131,5 +131,5 @@ class PurchaseOrderAPITest(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(purchase_order.acknowledgment_date, None)
-        self.assertAlmostEqual(
+        self.assertEqual(
             purchase_order.acknowledgment_date, timezone.now())
