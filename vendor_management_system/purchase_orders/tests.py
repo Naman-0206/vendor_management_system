@@ -3,6 +3,7 @@ from rest_framework import status
 from .models import PurchaseOrder
 from vendors.models import Vendor
 from .serializers import PurchaseOrderSerializer
+from django.utils import timezone
 
 
 class PurchaseOrderListAPITest(TestCase):
@@ -105,3 +106,25 @@ class PurchaseOrderListAPITest(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(PurchaseOrder.objects.count(), 0)
+
+    def test_acknowledge_purchase_order(self):
+
+        purchase_order = PurchaseOrder.objects.create(
+            po_number='PO-001',
+            vendor=self.vendor1,
+            items=['item1', 'item2'],
+            quantity=10,
+            status='pending'
+        )
+
+        self.assertEqual(purchase_order.acknowledgment_date, None)
+
+        response = self.client.post(
+            f'/api/purchase_orders/{purchase_order}/acknowledge/')
+
+        purchase_order.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(purchase_order.acknowledgment_date, None)
+        self.assertAlmostEqual(
+            purchase_order.acknowledgment_date, timezone.now())
