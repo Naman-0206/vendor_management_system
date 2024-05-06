@@ -1,6 +1,7 @@
 from django.dispatch import Signal, receiver
 from django.db.models.signals import post_save
 from .models import PurchaseOrder
+from django.db.models import F
 
 recalculate_avg_response_time_signal = Signal()
 
@@ -22,7 +23,7 @@ def recalculate_avg_response_time(sender, vendor, **kwargs):
 
 
 @receiver(post_save, sender=PurchaseOrder)
-def recalculate_vendor_fullfilment_rate(sender, instance: PurchaseOrder, **kwargs):
+def recalculate_fullfilment_rate(sender, instance: PurchaseOrder, **kwargs):
     if instance.status.lower() == 'completed':
         vendor = instance.vendor
         total_orders = PurchaseOrder.objects.filter(
@@ -35,7 +36,7 @@ def recalculate_vendor_fullfilment_rate(sender, instance: PurchaseOrder, **kwarg
 
 
 @receiver(post_save, sender=PurchaseOrder)
-def recalculate_vendor_avg_quality_rating(sender, instance: PurchaseOrder, **kwargs):
+def recalculate_avg_quality_rating(sender, instance: PurchaseOrder, **kwargs):
     if instance.status.lower() == 'completed' and instance.quality_rating:
         vendor = instance.vendor
         rated_pos = PurchaseOrder.objects.filter(
@@ -44,4 +45,18 @@ def recalculate_vendor_avg_quality_rating(sender, instance: PurchaseOrder, **kwa
             total_rating = sum(
                 rated_po.quality_rating for rated_po in rated_pos)
             vendor.quality_rating_avg = total_rating/rated_pos.count()
+            vendor.save()
+
+
+@receiver(post_save, sender=PurchaseOrder)
+def recalculate_on_time_delivery_rate(sender, instance: PurchaseOrder, **kwargs):
+    if instance.status.lower() == 'completed' and instance.delivery_date:
+        vendor = instance.vendor
+        on_time_pos = PurchaseOrder.objects.filter(
+            vendor=vendor, status__iexact='completed', expected_delivery_date__gte=F('delivery_date')).count()
+        total_completed_pos = PurchaseOrder.objects.filter(
+            vendor=vendor, status__iexact='completed').count()
+        if total_completed_pos > 0:
+            on_time_delivery_rate = on_time_pos/total_completed_pos*100
+            vendor.on_time_delivery_rate = on_time_delivery_rate
             vendor.save()
