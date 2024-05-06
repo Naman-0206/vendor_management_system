@@ -1,11 +1,20 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Vendor(models.Model):
     name = models.CharField(max_length=100)
-    contact_details = models.CharField(max_length=100)
+    contact_details = models.TextField()
     address = models.CharField(max_length=100)
     vendor_code = models.CharField(max_length=50, primary_key=True)
+
+    on_time_delivery_rate = models.FloatField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
+    quality_rating_avg = models.FloatField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    average_response_time = models.FloatField(default=0)
+    fulfilment_rate = models.FloatField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
     def __str__(self):
         return self.name
