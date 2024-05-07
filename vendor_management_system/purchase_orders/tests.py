@@ -13,12 +13,22 @@ class PurchaseOrderAPITest(TestCase):
             name="Test Vendor 1", vendor_code="TestVendor1")
         self.vendor2 = Vendor.objects.create(
             name="Test Vendor 2", vendor_code="TestVendor2")
+        self.po_details = {
+            'po_number': 'PO-001',
+            'vendor': self.vendor1,
+            'items': ['item1', 'item2'],
+            'quantity': 10,
+            'issue_date': timezone.now(),
+            'expected_delivery_date': timezone.now(),
+            'status': 'pending'
+        }
 
     def test_get_purchase_orders(self):
-        PurchaseOrder.objects.create(
-            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, issue_date=timezone.now(), status='pending')
-        PurchaseOrder.objects.create(
-            po_number='PO-002', vendor=self.vendor2, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, issue_date=timezone.now(), status='pending')
+        po2_details = self.po_details.copy()
+        po2_details['po_number'] = 'PO-002'
+
+        PurchaseOrder.objects.create(**self.po_details)
+        PurchaseOrder.objects.create(**po2_details)
 
         response = self.client.get('/api/purchase_orders/')
         purchase_orders = PurchaseOrder.objects.all()
@@ -28,12 +38,15 @@ class PurchaseOrderAPITest(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_get_purchase_orders_by_vendor(self):
-        PurchaseOrder.objects.create(
-            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, issue_date=timezone.now(), status='pending')
-        PurchaseOrder.objects.create(
-            po_number='PO-002', vendor=self.vendor1, items="[{'name': 'Product A', 'quantity': 5}]", quantity=5, issue_date=timezone.now(), status='pending')
-        PurchaseOrder.objects.create(
-            po_number='PO-003', vendor=self.vendor2, items="[{'name': 'Product B', 'quantity': 5}]", quantity=5, issue_date=timezone.now(), status='pending')
+        po2_details = self.po_details.copy()
+        po2_details['po_number'] = 'PO-002'
+        po3_details = self.po_details.copy()
+        po3_details['po_number'] = 'PO-003'
+        po3_details['vendor'] = self.vendor2
+
+        PurchaseOrder.objects.create(**self.po_details)
+        PurchaseOrder.objects.create(**po2_details)
+        PurchaseOrder.objects.create(**po3_details)
 
         response = self.client.get(
             '/api/purchase_orders/?vendor_code='+self.vendor1.pk)
@@ -49,6 +62,7 @@ class PurchaseOrderAPITest(TestCase):
             'vendor': self.vendor1.pk,
             'items': "[{'name': 'Product X', 'quantity': 10}]",
             'issue_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
+            'expected_delivery_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
             'quantity': '10',
             'status': 'pending'
         }
@@ -61,8 +75,7 @@ class PurchaseOrderAPITest(TestCase):
         self.assertEqual(PurchaseOrder.objects.get().po_number, 'PO-001')
 
     def test_retrive_purchase_orders(self):
-        purchase_order = PurchaseOrder.objects.create(
-            po_number='PO-001', vendor=self.vendor1, items="[{'name': 'Product X', 'quantity': 10}]", quantity=10, issue_date=timezone.now(), status='pending')
+        purchase_order = PurchaseOrder.objects.create(**self.po_details)
 
         response = self.client.get(f'/api/purchase_orders/{purchase_order}/')
         serializer = PurchaseOrderSerializer(purchase_order)
@@ -71,21 +84,52 @@ class PurchaseOrderAPITest(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_update_purchase_order(self):
-        purchase_order = PurchaseOrder.objects.create(
-            po_number='PO-001',
-            vendor=self.vendor1,
-            items=['item1', 'item2'],
-            quantity=10,
-            issue_date=timezone.now(),
-            status='pending'
-        )
+        purchase_order = PurchaseOrder.objects.create(**self.po_details)
         updated_data = {
             'po_number': 'PO-001',
             'vendor': self.vendor2.pk,
             'items': '["updated_item1", "updated_item2"]',
             'issue_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
+            'expected_delivery_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
+            'quantity': 20,
+            'status': 'pending'
+        }
+
+        response = self.client.put(
+            f'/api/purchase_orders/{purchase_order}/', updated_data, content_type='application/json')
+        purchase_order.refresh_from_db()
+        serializer = PurchaseOrderSerializer(purchase_order)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
+    def test_update_purchase_order_completed(self):
+        purchase_order = PurchaseOrder.objects.create(**self.po_details)
+        updated_data = {
+            'po_number': 'PO-001',
+            'vendor': self.vendor2.pk,
+            'items': '["updated_item1", "updated_item2"]',
+            'issue_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
+            'expected_delivery_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
             'quantity': 20,
             'status': 'completed'
+        }
+
+        response = self.client.put(
+            f'/api/purchase_orders/{purchase_order}/', updated_data, content_type='application/json')
+        purchase_order.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        updated_data = {
+            'po_number': 'PO-001',
+            'vendor': self.vendor2.pk,
+            'items': '["updated_item1", "updated_item2"]',
+            'issue_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
+            'expected_delivery_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S'),
+            'quantity': 20,
+            'status': 'completed',
+            'delivery_date': timezone.now().strftime('%Y-%m-%dT%H:%M:%S')
         }
 
         response = self.client.put(
@@ -97,14 +141,7 @@ class PurchaseOrderAPITest(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_delete_purchase_order(self):
-        purchase_order = PurchaseOrder.objects.create(
-            po_number='PO-001',
-            vendor=self.vendor1,
-            items=['item1', 'item2'],
-            quantity=10,
-            issue_date=timezone.now(),
-            status='pending'
-        )
+        purchase_order = PurchaseOrder.objects.create(**self.po_details)
         response = self.client.delete(
             f'/api/purchase_orders/{purchase_order.pk}/')
 
@@ -113,14 +150,7 @@ class PurchaseOrderAPITest(TestCase):
 
     def test_acknowledge_purchase_order(self):
 
-        purchase_order = PurchaseOrder.objects.create(
-            po_number='PO-001',
-            vendor=self.vendor1,
-            items=['item1', 'item2'],
-            quantity=10,
-            issue_date=timezone.now(),
-            status='pending'
-        )
+        purchase_order = PurchaseOrder.objects.create(**self.po_details)
 
         self.assertEqual(purchase_order.acknowledgment_date, None)
 
