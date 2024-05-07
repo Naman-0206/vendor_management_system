@@ -67,7 +67,7 @@ Comprehensive API documentation with live testing is available at the following 
 
 These endpoints provide detailed information about all API endpoints, request parameters, and responses.
 
-### API Authentication
+## API Authentication
 
 **All API endpoints are protected and require authentication using a token.** Follow these steps to authenticate:
 
