@@ -45,12 +45,6 @@ INSTALLED_APPS = [
     'drf_spectacular_sidecar',
 ]
 
-SPECTACULAR_SETTINGS = {
-    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
-    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
-    'REDOC_DIST': 'SIDECAR',
-    # OTHER SETTINGS
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -138,7 +132,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 HISTORICAL_RECORD_DELAY_SECONDS = 12 * 60 * 60
 
 REST_FRAMEWORK = {
-    # YOUR SETTINGS
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-
+}
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Vendor Management System',
 }

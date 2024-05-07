@@ -24,6 +24,29 @@ class VendorRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 
 
 class VendorPerformance(APIView):
+    """
+    API endpoint for retrieving performance metrics of a vendor.
+
+    GET request:
+    - Retrieves the performance metrics of a vendor based on the provided vendor code.
+    - Returns the performance metrics in the response along with a status code.
+
+    Response format:
+    {
+        "vendor_code": "<vendor_code>",
+        "on_time_delivery_rate": <value>,
+        "quality_rating_avg": <value>,
+        "average_response_time": <value>,
+        "fulfilment_rate": <value>
+    }
+
+    If the vendor with the provided code is not found, returns a 404 error.
+
+    Error response format:
+    {
+        "error": "Vendor not found"
+    }
+    """
     serializer_class = VendorPerformanceSerializer
 
     def get(self, request, vendor_code):

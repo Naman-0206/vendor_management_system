@@ -17,3 +17,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 {'delivery_date': 'Delivery date cannot be null for completed orders.'})
 
         return data
+
+
+class AcknowledgePurchaseOrderSerializer(serializers.Serializer):
+    pass

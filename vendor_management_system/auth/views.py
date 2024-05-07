@@ -8,6 +8,31 @@ from django.contrib.auth.models import User
 
 
 class RegisterUser(APIView):
+    """
+    API endpoint for user registration.
+
+    Upon successful registration, generates a token for the user.
+
+    POST request:
+    - Receives user registration data in the request payload.
+    - Validates the data using the UserSerializer.
+    - If valid, saves the user and generates a token.
+    - Returns the token in the response along with a status code.
+
+    Response format:
+    {
+        "token": "<generated_token>"
+    }
+
+    If the data is not valid, returns the validation errors.
+
+    Error response format:
+    {
+        "<field_name>": [
+            "<error_message>"
+        ]
+    }
+    """
     serializer_class = UserSerializer
 
     def post(self, request: Request):

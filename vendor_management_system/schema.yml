@@ -1,0 +1,634 @@
+openapi: 3.0.3
+info:
+  title: Vendor Management System
+  version: 0.0.0
+paths:
+  /api/purchase_orders/:
+    get:
+      operationId: api_purchase_orders_retrieve
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+          description: ''
+    post:
+      operationId: api_purchase_orders_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrder'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+          description: ''
+  /api/purchase_orders/{po_number}/:
+    get:
+      operationId: api_purchase_orders_retrieve_2
+      parameters:
+      - in: path
+        name: po_number
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+          description: ''
+    put:
+      operationId: api_purchase_orders_update
+      parameters:
+      - in: path
+        name: po_number
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrder'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+          description: ''
+    delete:
+      operationId: api_purchase_orders_destroy
+      parameters:
+      - in: path
+        name: po_number
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/purchase_orders/{po_number}/acknowledge/:
+    post:
+      operationId: api_purchase_orders_acknowledge_create
+      parameters:
+      - in: path
+        name: po_number
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/register/:
+    post:
+      operationId: api_register_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/token/:
+    post:
+      operationId: api_token_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/vendors/:
+    get:
+      operationId: api_vendors_list
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendorDetails'
+          description: ''
+    post:
+      operationId: api_vendors_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendorDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VendorDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VendorDetails'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorDetails'
+          description: ''
+  /api/vendors/{vendor_code}/:
+    get:
+      operationId: api_vendors_retrieve
+      parameters:
+      - in: path
+        name: vendor_code
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorDetails'
+          description: ''
+    put:
+      operationId: api_vendors_update
+      parameters:
+      - in: path
+        name: vendor_code
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendorDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VendorDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VendorDetails'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorDetails'
+          description: ''
+    patch:
+      operationId: api_vendors_partial_update
+      parameters:
+      - in: path
+        name: vendor_code
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVendorDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVendorDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVendorDetails'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorDetails'
+          description: ''
+    delete:
+      operationId: api_vendors_destroy
+      parameters:
+      - in: path
+        name: vendor_code
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/vendors/{vendor_code}/performance/:
+    get:
+      operationId: api_vendors_performance_retrieve
+      parameters:
+      - in: path
+        name: vendor_code
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorPerformance'
+          description: ''
+components:
+  schemas:
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          readOnly: true
+      required:
+      - password
+      - token
+      - username
+    PatchedVendorDetails:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        contact_details:
+          type: string
+        address:
+          type: string
+        vendor_code:
+          type: string
+          maxLength: 50
+    PurchaseOrder:
+      type: object
+      properties:
+        po_number:
+          type: string
+          maxLength: 100
+        vendor:
+          type: string
+        order_date:
+          type: string
+          format: date-time
+          readOnly: true
+        issue_date:
+          type: string
+          format: date-time
+        items: {}
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        status:
+          type: string
+          maxLength: 50
+        quality_rating:
+          type: number
+          format: double
+          maximum: 5
+          minimum: 0
+          nullable: true
+        expected_delivery_date:
+          type: string
+          format: date-time
+        delivery_date:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - expected_delivery_date
+      - issue_date
+      - items
+      - order_date
+      - po_number
+      - quantity
+      - vendor
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          maxLength: 128
+      required:
+      - password
+      - username
+    VendorDetails:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        contact_details:
+          type: string
+        address:
+          type: string
+        vendor_code:
+          type: string
+          maxLength: 50
+      required:
+      - address
+      - contact_details
+      - name
+      - vendor_code
+    VendorPerformance:
+      type: object
+      properties:
+        vendor_code:
+          type: string
+          maxLength: 50
+        on_time_delivery_rate:
+          type: number
+          format: double
+          maximum: 100
+          minimum: 0
+        quality_rating_avg:
+          type: number
+          format: double
+          maximum: 5
+          minimum: 0
+        average_response_time:
+          type: number
+          format: double
+        fulfilment_rate:
+          type: number
+          format: double
+          maximum: 100
+          minimum: 0
+      required:
+      - vendor_code
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
