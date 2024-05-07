@@ -2,12 +2,13 @@ from django.dispatch import Signal, receiver
 from django.db.models.signals import post_save
 from .models import PurchaseOrder
 from django.db.models import F
+from vendors.models import Vendor
 
 recalculate_avg_response_time_signal = Signal()
 
 
 @receiver(recalculate_avg_response_time_signal)
-def recalculate_avg_response_time(sender, vendor, **kwargs):
+def recalculate_avg_response_time(sender, vendor: Vendor, **kwargs):
     vendor_purchase_orders = PurchaseOrder.objects.filter(
         vendor=vendor, acknowledgment_date__isnull=False)
 
@@ -37,7 +38,7 @@ def recalculate_fullfilment_rate(sender, instance: PurchaseOrder, **kwargs):
 
 @receiver(post_save, sender=PurchaseOrder)
 def recalculate_avg_quality_rating(sender, instance: PurchaseOrder, **kwargs):
-    if instance.status.lower() == 'completed' and instance.quality_rating:
+    if instance.status.lower() == 'completed' and instance.quality_rating != None:
         vendor = instance.vendor
         rated_pos = PurchaseOrder.objects.filter(
             vendor=vendor, quality_rating__isnull=False)

@@ -124,3 +124,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+HISTORICAL_RECORD_DELAY_SECONDS = 12 * 60 * 60

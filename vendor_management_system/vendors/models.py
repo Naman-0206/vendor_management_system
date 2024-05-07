@@ -22,7 +22,7 @@ class Vendor(models.Model):
 
 class HistoricalPerformance(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(auto_now=True)
     on_time_delivery_rate = models.FloatField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
     quality_rating_avg = models.FloatField(
@@ -32,4 +32,4 @@ class HistoricalPerformance(models.Model):
         default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
     def __str__(self) -> str:
-        return self.vendor + self.date
+        return f"{self.vendor.vendor_code} {self.date.strftime('%Y-%m-%d %H: %M')}"
