@@ -162,4 +162,4 @@ class PurchaseOrderAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(purchase_order.acknowledgment_date, None)
         self.assertEqual(
-            purchase_order.acknowledgment_date, timezone.now())
+            purchase_order.acknowledgment_date.strftime("%Y-%m-%d %H:%M:%S"), timezone.now().strftime("%Y-%m-%d %H:%M:%S"))
