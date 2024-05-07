@@ -24,6 +24,8 @@ class VendorRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 
 
 class VendorPerformance(APIView):
+    serializer_class = VendorPerformanceSerializer
+
     def get(self, request, vendor_code):
         try:
             vendor = Vendor.objects.get(vendor_code=vendor_code)

@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 class PurchaseOrderListCreate(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = PurchaseOrderSerializer
 
     def get(self, request):
         vendor_code = request.query_params.get('vendor_code', None)
@@ -34,6 +35,7 @@ class PurchaseOrderListCreate(APIView):
 class PurchaseOrderDetail(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = PurchaseOrderSerializer
 
     def get_object(self, pk):
         try:

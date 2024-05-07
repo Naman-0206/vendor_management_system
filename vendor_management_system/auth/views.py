@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 
 
 class RegisterUser(APIView):
+    serializer_class = UserSerializer
+
     def post(self, request: Request):
         serializer = UserSerializer(data=request.data)
 
