@@ -4,6 +4,8 @@ from .models import PurchaseOrder
 from vendors.models import Vendor
 from .serializers import PurchaseOrderSerializer
 from django.utils import timezone
+from datetime import timedelta
+import json
 
 
 class PurchaseOrderAPITest(TestCase):
@@ -163,3 +165,59 @@ class PurchaseOrderAPITest(TestCase):
         self.assertNotEqual(purchase_order.acknowledgment_date, None)
         self.assertEqual(
             purchase_order.acknowledgment_date.strftime("%Y-%m-%d %H:%M:%S"), timezone.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+
+class VendorPreformanceUpdateTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.vendor = Vendor.objects.create(
+            name="Test Vendor 1", vendor_code="TestVendor1")
+        self.po_details = {
+            'po_number': 'PO-001',
+            'vendor': self.vendor,
+            'items': ['item1', 'item2'],
+            'quantity': 10,
+            'issue_date': timezone.now(),
+            'expected_delivery_date': timezone.now(),
+            'status': 'pending'
+        }
+
+    def test_update_vendor_performance(self):
+        response = self.client.get(
+            f'/api/vendors/{self.vendor.pk}/performance/')
+        expected_data = {
+            "vendor_code": self.vendor.pk,
+            "on_time_delivery_rate": 0,
+            "quality_rating_avg": 0,
+            "average_response_time": 0,
+            "fulfilment_rate": 0
+        }
+        self.assertEqual(response.status_code,
+                         status.HTTP_200_OK, msg=response.data)
+        self.assertEqual(response.data, expected_data)
+
+        purchase_order = PurchaseOrder.objects.create(**self.po_details)
+        updated_data = self.po_details.copy()
+        updated_data['vendor'] = self.vendor.pk
+        updated_data['status'] = 'completed'
+        updated_data['quality_rating'] = 4
+        updated_data['delivery_date'] = self.po_details['issue_date'] - \
+            timedelta(days=1)
+
+        expected_data = {
+            "vendor_code": self.vendor.pk,
+            "on_time_delivery_rate": 100.0,
+            "quality_rating_avg": 4.0,
+            "average_response_time": 0.0,
+            "fulfilment_rate": 100.0
+        }
+
+        response = self.client.put(
+            f'/api/purchase_orders/{purchase_order}/', updated_data, content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.get(
+            f'/api/vendors/{self.vendor.pk}/performance/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, expected_data)
