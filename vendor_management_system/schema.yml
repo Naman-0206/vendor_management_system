@@ -6,6 +6,10 @@ paths:
   /api/purchase_orders/:
     get:
       operationId: api_purchase_orders_retrieve
+      description: |-
+        Retrieve a list of purchase orders.
+
+        You can filter by vendor code using the query parameter 'vendor_code'.
       tags:
       - api
       security:
@@ -19,6 +23,7 @@ paths:
           description: ''
     post:
       operationId: api_purchase_orders_create
+      description: Create a new purchase order.
       tags:
       - api
       requestBody:
@@ -45,6 +50,7 @@ paths:
   /api/purchase_orders/{po_number}/:
     get:
       operationId: api_purchase_orders_retrieve_2
+      description: Retrieve a specific purchase order by its PO number.
       parameters:
       - in: path
         name: po_number
@@ -64,6 +70,7 @@ paths:
           description: ''
     put:
       operationId: api_purchase_orders_update
+      description: Update a specific purchase order by its PO number.
       parameters:
       - in: path
         name: po_number
@@ -95,6 +102,7 @@ paths:
           description: ''
     delete:
       operationId: api_purchase_orders_destroy
+      description: Delete a specific purchase order by its PO number.
       parameters:
       - in: path
         name: po_number
@@ -111,6 +119,7 @@ paths:
   /api/purchase_orders/{po_number}/acknowledge/:
     post:
       operationId: api_purchase_orders_acknowledge_create
+      description: Acknowledge a purchase order by updating its acknowledgment date.
       parameters:
       - in: path
         name: po_number
@@ -127,6 +136,30 @@ paths:
   /api/register/:
     post:
       operationId: api_register_create
+      description: |-
+        API endpoint for user registration.
+
+        Upon successful registration, generates a token for the user.
+
+        POST request:
+        - Receives user registration data in the request payload.
+        - Validates the data using the UserSerializer.
+        - If valid, saves the user and generates a token.
+        - Returns the token in the response along with a status code.
+
+        Response format:
+        {
+            "token": "<generated_token>"
+        }
+
+        If the data is not valid, returns the validation errors.
+
+        Error response format:
+        {
+            "<field_name>": [
+                "<error_message>"
+            ]
+        }
       tags:
       - api
       requestBody:
@@ -465,6 +498,28 @@ paths:
   /api/vendors/{vendor_code}/performance/:
     get:
       operationId: api_vendors_performance_retrieve
+      description: |-
+        API endpoint for retrieving performance metrics of a vendor.
+
+        GET request:
+        - Retrieves the performance metrics of a vendor based on the provided vendor code.
+        - Returns the performance metrics in the response along with a status code.
+
+        Response format:
+        {
+            "vendor_code": "<vendor_code>",
+            "on_time_delivery_rate": <value>,
+            "quality_rating_avg": <value>,
+            "average_response_time": <value>,
+            "fulfilment_rate": <value>
+        }
+
+        If the vendor with the provided code is not found, returns a 404 error.
+
+        Error response format:
+        {
+            "error": "Vendor not found"
+        }
       parameters:
       - in: path
         name: vendor_code
