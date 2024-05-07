@@ -6,9 +6,14 @@ from .serializers import PurchaseOrderSerializer
 from django.http import Http404
 from django.utils import timezone
 from .signals import recalculate_avg_response_time_signal
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 class PurchaseOrderListCreate(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         vendor_code = request.query_params.get('vendor_code', None)
         if vendor_code:
@@ -27,6 +32,9 @@ class PurchaseOrderListCreate(APIView):
 
 
 class PurchaseOrderDetail(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return PurchaseOrder.objects.get(pk=pk)
@@ -53,6 +61,9 @@ class PurchaseOrderDetail(APIView):
 
 
 class AcknowledgePurchaseOrder(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, po_number):
         try:
             purchase_order = PurchaseOrder.objects.get(pk=po_number)
