@@ -67,6 +67,25 @@ Comprehensive API documentation with live testing is available at the following 
 
 These endpoints provide detailed information about all API endpoints, request parameters, and responses.
 
+### API Authentication
+
+**All API endpoints are protected and require authentication using a token.** Follow these steps to authenticate:
+
+#### Register a new user:
+
+`POST /api/register/`
+This endpoint creates a new user. Provide a username and password in the request body.
+
+Obtain an authentication token:
+`POST /api/token/`
+Use the credentials of the registered user to obtain an authentication token. Provide the username and password in the request body. This endpoint will return a token.
+
+Use the token for accessing protected endpoints:
+Include the obtained token in the Authorization header of subsequent requests. The header should be in the format:
+`Authorization: Token <your-token>`
+
+With the authentication token, you can access all protected endpoints by including the token in the request header.
+
 ## API Guide
 
 ### Endpoints
@@ -99,25 +118,6 @@ These endpoints provide detailed information about all API endpoints, request pa
 
 - `POST /api/token/`: Obtain authentication token.
 - `POST /api/register/`: Register a new user.
-
-### API Authentication
-
-All API endpoints are protected and require authentication using a token. Follow these steps to authenticate:
-
-#### Register a new user:
-
-`POST /api/register/`
-This endpoint creates a new user. Provide a username and password in the request body.
-
-Obtain an authentication token:
-`POST /api/token/`
-Use the credentials of the registered user to obtain an authentication token. Provide the username and password in the request body. This endpoint will return a token.
-
-Use the token for accessing protected endpoints:
-Include the obtained token in the Authorization header of subsequent requests. The header should be in the format:
-`Authorization: Token <your-token>`
-
-With the authentication token, you can access all protected endpoints by including the token in the request header.
 
 ### Deployment
 
