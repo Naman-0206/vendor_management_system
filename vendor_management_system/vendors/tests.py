@@ -3,11 +3,18 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Vendor
 from .serializers import VendorPerformanceSerializer
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
 
 
 class VendorProfileTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='test_user', password='test_password')
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
         self.vendor = Vendor.objects.create(
             name='Test Vendor',
             contact_details='test@example.com',
